@@ -1,7 +1,7 @@
-jenkins_url: http://localhost:8080/
+jenkins_url: http://jenkins.myciinabox.com/
 
 defaults:
-  scripts_dir: ciinaboxes.example/example
+  scripts_dir: ciinaboxes/example/scripts
   github:
     protocol: https                                         # ssh or https
     credentials: my-gh-creds                                # Not required for public repos, this should

@@ -1,9 +1,9 @@
  #ciinabox jenkins config
 
-jenkins_url: http://localhost:8080/
+jenkins_url: http://jenkins.myciinabox.com/
 
 defaults:
-  scripts_dir: ciinaboxes.example/scripts
+  scripts_dir: ciinaboxes/example/scripts
   git:
     credentials: gitcreds
   github:
@@ -27,6 +27,33 @@ jobs:
     repo: base2Services/ciinabox-ecs
     shell:
       - file: example.sh
+  -
+    name: Baking-BA-AMI
+    folder: ifs
+    repo: base2Services/ciinabox-bakery
+    branch: master
+    parameters:
+      client: ss-ifs
+      role: touch
+      region: ap-southeast-2
+      source_ami: ami-899eafea
+      source_bucket: source.ifs.aws.servicestream.com.au
+      cookbook_tar: chef-bundle.tar.gz
+      packer_template: packer/amz_win_esb_ami_no_sysprep.json
+      packer_default_params: base_params.json
+      packer_instance_type: m3.medium
+      chef_run_list: recipe[servicestream-ifs::touch]
+    artifacts:
+      -
+        job: ifs/Chef-release-deploy
+        file_pattern: cb_build.properties
+      -
+        job: ifs/Baking-default-params
+        file_pattern: base_params.json
+    shell:
+      - file: chef-bakery.sh
+    archive:
+      - ${ROLE}-ami-${BUILD_NUMBER}.yml
   -
     name: Example-Pull-Request-GitHub-SSH
     folder: example
